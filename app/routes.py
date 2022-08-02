@@ -1,6 +1,7 @@
-from flask import render_template, request
+from flask import redirect, render_template, request
 import requests
 from app import app
+from .models import User
 from .forms import LoginForm, RegisterForm
 
 # Routes
@@ -22,6 +23,20 @@ def students():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        new_user_data ={
+            "first_name": form.first_name.data.title(),
+            "last_name": form.last_name.data.title(),
+            "email": form.email.data.lower(),
+            "password": form.password.data
+        }
+        #create an empty user
+        new_user_object = User()
+        #build user from data
+        new_user_object.from_dict(new_user_data)
+        #save usser to database
+        new_user_object.save()
+        return redirect(url_for('login'))
     return render_template('register.html.j2', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])

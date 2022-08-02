@@ -19,5 +19,6 @@ class RegisterForm(FlaskForm):
     submit = SubmitField('Register')
 
     def validate_email(form, field):
-        if field.data.lower() in app.config.get('REGISTERED_USERS'):
+        same_email_user = User.quarey 
+        if same_email_user:
             return ValidationError('Email is Already in Use')
